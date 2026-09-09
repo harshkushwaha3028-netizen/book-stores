@@ -1,6 +1,9 @@
 package com.books.store.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
 
 import java.math.BigDecimal;
 
@@ -11,11 +14,17 @@ public class Book {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank(message = "title cannot be blank")
     private  String title;
+    @NotBlank(message = "author cannot be blank")
     private String author;
+    @Positive(message = "price must be greater than zero")
     private BigDecimal price;
+    @NotBlank(message = "description cannot be blank")
     private String description;
+    @PositiveOrZero(message = "stock cannot be negative")
     private Integer stock;
+    @NotBlank(message = "category cannot be blank")
     private String category;
 
     public Book(){

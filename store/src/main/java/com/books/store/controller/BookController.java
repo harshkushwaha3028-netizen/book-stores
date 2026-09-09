@@ -1,7 +1,9 @@
 package com.books.store.controller;
 
 import com.books.store.entity.Book;
+import com.books.store.exception.BookNotFoundException;
 import com.books.store.service.BookService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,20 +19,14 @@ public class BookController {
         this.bookService=bookService;
     }
     @GetMapping("/{id}")
-    public ResponseEntity<Optional<Book>> getBookById(@PathVariable Long id) {
-
-        Optional<Book> book = bookService.getBookById(id);
-
-        if (book.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-
+    public ResponseEntity<Book> getBookById(@PathVariable Long id) {
+        Book book = bookService.getBookById(id);
         return ResponseEntity.ok(book);
     }
     @PostMapping
-    public ResponseEntity<Book> createBook(@RequestBody Book book) {
+    public ResponseEntity<Book> createBook(@RequestBody @Valid Book book) {
         Book savedBook = bookService.createBook(book);
-        return ResponseEntity.ok(savedBook);
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedBook);
     }
     @PutMapping("/{id}")
     public ResponseEntity<Book> updateBook(
