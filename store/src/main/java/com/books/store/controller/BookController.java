@@ -18,6 +18,11 @@ public class BookController {
     public BookController(BookService bookService){
         this.bookService=bookService;
     }
+    @GetMapping
+    public ResponseEntity<List<Book>> getAllBooks() {
+        List<Book> books = bookService.getAllBook();
+        return ResponseEntity.ok(books);
+    }
     @GetMapping("/{id}")
     public ResponseEntity<Book> getBookById(@PathVariable Long id) {
         Book book = bookService.getBookById(id);
