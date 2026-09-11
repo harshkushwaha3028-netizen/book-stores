@@ -5,6 +5,7 @@ import com.books.store.dto.OrderResponse;
 import com.books.store.entity.Order;
 import com.books.store.service.OrderService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -75,5 +76,48 @@ public class OrderController {
                 .toList();
 
         return ResponseEntity.ok(responses);
+    }
+    @GetMapping("/admin")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<List<OrderResponse>> getAllOrders() {
+
+        List<Order> orders = orderService.getAllOrders();
+
+        List<OrderResponse> responses = orders.stream()
+                .map(this::convertToResponse)
+                .toList();
+
+        return ResponseEntity.ok(responses);
+    }
+
+    @PutMapping("/admin/{orderId}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<OrderResponse> updateStatus(
+            @PathVariable Long orderId,
+            @RequestParam String status) {
+
+        Order order = orderService.updateStatus(orderId, status);
+
+        return ResponseEntity.ok(convertToResponse(order));
+    }
+    private OrderResponse convertToResponse(Order order) {
+
+        List<OrderItemResponse> items = order.getItems()
+                .stream()
+                .map(item -> new OrderItemResponse(
+                        item.getBook().getId(),
+                        item.getBook().getTitle(),
+                        item.getPrice(),
+                        item.getQuantity()
+                ))
+                .toList();
+
+        return new OrderResponse(
+                order.getId(),
+                order.getTotal(),
+                order.getStatus(),
+                order.getOrderDate(),
+                items
+        );
     }
 }

@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class OrderService {
@@ -86,5 +87,17 @@ public class OrderService {
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         return orderRepository.findByUserId(userId);
+    }
+    public List<Order> getAllOrders() {
+        return orderRepository.findAll();
+    }
+    public Order updateStatus(Long orderId, String status) {
+
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new RuntimeException("Order not found"));
+
+        order.setStatus(status);
+
+        return orderRepository.save(order);
     }
 }
