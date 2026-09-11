@@ -45,4 +45,35 @@ public class OrderController {
 
         return ResponseEntity.ok(response);
     }
+    @GetMapping
+    public ResponseEntity<List<OrderResponse>> getMyOrders(
+            @RequestParam Long userId) {
+
+        List<Order> orders = orderService.getMyOrders(userId);
+
+        List<OrderResponse> responses = orders.stream()
+                .map(order -> {
+
+                    List<OrderItemResponse> items = order.getItems()
+                            .stream()
+                            .map(item -> new OrderItemResponse(
+                                    item.getBook().getId(),
+                                    item.getBook().getTitle(),
+                                    item.getPrice(),
+                                    item.getQuantity()
+                            ))
+                            .toList();
+
+                    return new OrderResponse(
+                            order.getId(),
+                            order.getTotal(),
+                            order.getStatus(),
+                            order.getOrderDate(),
+                            items
+                    );
+                })
+                .toList();
+
+        return ResponseEntity.ok(responses);
+    }
 }

@@ -80,4 +80,11 @@ public class OrderService {
 
         return savedOrder;
     }
+    public java.util.List<Order> getMyOrders(Long userId) {
+
+        userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        return orderRepository.findByUserId(userId);
+    }
 }
