@@ -21,6 +21,7 @@ public class Order {
 
     private BigDecimal total;
 
+    @Column(nullable = false)
     private String status;
 
     private LocalDateTime orderDate;

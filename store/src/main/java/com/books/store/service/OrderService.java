@@ -94,10 +94,23 @@ public class OrderService {
     public Order updateStatus(Long orderId, String status) {
 
         Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new RuntimeException("Order not found"));
+                .orElseThrow(() ->
+                        new RuntimeException("Order not found")
+                );
 
-        order.setStatus(status);
+        String newStatus = status.toUpperCase();
+
+        if (!newStatus.equals("PLACED")
+                && !newStatus.equals("CONFIRMED")
+                && !newStatus.equals("SHIPPED")
+                && !newStatus.equals("DELIVERED")
+                && !newStatus.equals("CANCELLED")) {
+
+            throw new RuntimeException("Invalid order status: " + status);
+        }
+
+        order.setStatus(newStatus);
 
         return orderRepository.save(order);
     }
-}
+    }
